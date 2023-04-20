@@ -3,9 +3,11 @@ from rich.table import Table
 from rich.live import Live
 from rich.align import Align
 import httpx
-import asyncio
 import aiofiles
 from rich.console import Console
+import anyio
+import asyncclick as click
+import os.path 
 
 def gen_table(data, width):
     table = Table(style='blue', width=width)
@@ -36,7 +38,10 @@ def gen_table(data, width):
 
     return Align.center(table)
 
-async def main():
+@click.command()
+@click.option("--out",  default='.', help="Output directory")
+@click.option("--type", default='png', help="Type of media to archive (png or mp4)")
+async def main(out, type):
 
     console = Console()
     width = console.width
@@ -55,7 +60,7 @@ async def main():
 
                 # generate random id
                 id = gen_id()
-                url = f'https://i.imgur.com/{id}.png'
+                url = f'https://i.imgur.com/{id}.{type}'
 
                 # update table
                 table[url] = (0, -1)
@@ -78,7 +83,9 @@ async def main():
                 live.update(gen_table(table, width))
 
                 # write the content
-                async with aiofiles.open(f'{id}.png', 'wb') as file:
+                path = os.path.join(out, f'{id}.{type}')
+
+                async with aiofiles.open(path, 'wb') as file:
                     await file.write(res.content) 
 
                 # file is closed after that due to `with`
@@ -88,4 +95,4 @@ async def main():
                     
 
 def run():
-    asyncio.run(main())
+    main(_anyio_backend='asyncio')
