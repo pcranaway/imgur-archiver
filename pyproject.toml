@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "imgur-archiver"
+version = "0.1.0"
+description = ""
+authors = ["pcranaway <pcranaway@tuta.io>"]
+readme = "README.md"
+packages = [{include = "imgur_archiver"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+rich = "^13.3.4"
+httpx = "^0.24.0"
+aiofiles = "^23.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+imgur_archiver = "imgur_archiver.main:run"
+
